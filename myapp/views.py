@@ -41,6 +41,12 @@ from .serializers import UserSerializer, LoginSerializer
 class UsuarioApiView(APIView):
     #permission_classes = [permissions.IsAuthenticated]
 
+    '''def get_object(self, id):
+        try:
+            return Usuario.objects.get(id=id)
+        except Usuario.DoesNotExist:
+            return None'''
+    
     def get(self, request, *args, **kwargs):
         usuarios = Usuario.objects.all()
         serializer = UsuarioSerializer(usuarios, many=True)
@@ -59,6 +65,90 @@ class UsuarioApiView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+'''
+    def put(self, request, id, *args, **kwargs):
+        
+        usuario_instance = self.get_object(id)
+        if not usuario_instance:
+            return Response(
+                {"res": "Object with id=%s does not exists"%id}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {
+            'nome': request.data.get('nome'), 
+            'login': request.data.get('login'), 
+            'senha': request.data.get('senha'),
+            'perfil': request.data.get('perfil')
+        }
+        serializer = UsuarioSerializer(instance = usuario_instance, data=data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, *args, **kwargs):
+        usuario_instance = self.get_object(id)
+        if not usuario_instance:
+            return Response(
+                {"res": "Usuário não existente"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        usuario_instance.delete()
+        return Response({"res": "Usuário id=%s excluído"%id}, status=status.HTTP_200_OK)
+'''
+
+class UsuarioIdApiView(APIView):
+    #permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, id):
+        try:
+            return Usuario.objects.get(id=id)
+        except Usuario.DoesNotExist:
+            return None
+
+    def get(self, request, id, *args, **kwargs):
+        usuario = self.get_object(id)
+        if not usuario:
+            return Response(
+                {"res": "Usuario não localizado"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = UsuarioSerializer(usuario)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, id, *args, **kwargs):
+        
+        usuario_instance = self.get_object(id)
+        if not usuario_instance:
+            return Response(
+                {"res": "Object with id=%s does not exists"%id}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {
+            'nome': request.data.get('nome'), 
+            'login': request.data.get('login'), 
+            'senha': request.data.get('senha'),
+            'perfil': request.data.get('perfil')
+        }
+        serializer = UsuarioSerializer(instance = usuario_instance, data=data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, id, *args, **kwargs):
+        usuario_instance = self.get_object(id)
+        if not usuario_instance:
+            return Response(
+                {"res": "Usuário não existente"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        usuario_instance.delete()
+        return Response({"res": "Usuário id=%s excluído"%id}, status=status.HTTP_200_OK)
+
+
 
 class LoginApiView(APIView):
 
@@ -91,3 +181,5 @@ class LoginApiView(APIView):
         if login_serializer.is_valid():
             return Response(login_serializer.errors, status=status.HTTP_403_FORBIDDEN)
         return Response(login_serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
+    

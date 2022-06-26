@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from myapp.views import LoginApiView
-from myapp.views import UsuarioApiView
+from myapp.views import UsuarioApiView, UsuarioIdApiView
 from myapp.views import RegisterAPI
 
 from knox import views as knox_views
@@ -36,5 +36,6 @@ urlpatterns = [
     path('api/logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
 
     path('usuarios/', UsuarioApiView.as_view()),
+    path('usuarios/<int:id>', UsuarioIdApiView.as_view()),
     path('login/', LoginApiView.as_view()),
 ]
